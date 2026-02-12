@@ -1,0 +1,60 @@
+services:
+  traefik:
+    image: "traefik:v3.6"
+    container_name: "traefik"
+    restart: unless-stopped
+    user: "0"
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+    command:
+      - "--log.level=DEBUG"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=proxy"
+      - "--entryPoints.web.address=:${TRAEFIK_PORT_1}"
+      - "--entryPoints.websecure.address=:${TRAEFIK_PORT_2}" 
+      - "--api=true"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entryPoints.web.http.redirections.entrypoint.to=websecure"
+      - "--providers.file.directory=/dynamic"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.service=api@internal"
+      - "traefik.http.routers.api.rule=Host(`${TRAEFIK_DOMAIN}`)"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.tls=true"
+      - "traefik.http.routers.api.middlewares=tinyauth@docker"
+    ports:
+      - "${TRAEFIK_PORT_1}:${TRAEFIK_PORT_1}"
+      - "${TRAEFIK_PORT_2}:${TRAEFIK_PORT_2}"
+      
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "/etc/letsencrypt:/etc/letsencrypt:ro"
+      - "./dynamic:/dynamic:ro"
+      
+  tinyauth:
+    image: "ghcr.io/steveiliop56/tinyauth:v4"
+    container_name: tinyauth
+    restart: unless-stopped
+    environment:
+      - APP_URL=${URL}
+      - USERS=user:${USER}
+      - PROVIDERS_GOOGLE_CLIENT_ID=${ID}
+      - PROVIDERS_GOOGLE_CLIENT_SECRET=${SECRET}
+      - OAUTH_WHITELIST=${WHITELIST}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tinyauth.rule=Host(`${TINYAUTH_URL}`)"
+      - "traefik.http.middlewares.tinyauth.forwardauth.address=${FORWARD_ADRESS}"
+      - "traefik.http.routers.tinyauth.entrypoints=websecure"
+      - "traefik.http.routers.tinyauth.tls=true"
+      - "traefik.http.services.tinyauth.loadbalancer.server.port=${SERVER_PORT}"
+    networks:
+      - proxy
+      
+networks:
+  proxy:
+    external: true

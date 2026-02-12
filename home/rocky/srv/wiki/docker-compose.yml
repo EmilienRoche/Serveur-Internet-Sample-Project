@@ -1,0 +1,22 @@
+services:
+  otterwiki:
+    image: redimp/otterwiki:2
+    restart: unless-stopped
+    container_name: otterwiki
+    volumes:
+      - ./app-data:/app-data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wiki.rule=Host(`${URL_WIKI}`)"
+      - "traefik.http.routers.wiki.entrypoints=web"
+      - "traefik.http.services.wiki.loadbalancer.server.port=${PORT}"
+      - "traefik.http.routers.wiki.entrypoints=websecure"
+      - "traefik.http.routers.wiki.tls=true"
+
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+

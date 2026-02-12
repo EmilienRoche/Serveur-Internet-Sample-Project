@@ -1,0 +1,58 @@
+services:
+  frontend:
+    image: emilienroche/frontend
+    container_name: frontend
+    networks:
+      - proxy
+    depends_on:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`${TASKLIST_DOMAIN}`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=${FRONTEND_PORT}"
+      - "traefik.http.routers.frontend.tls=true"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.middlewares=${TRAEFIK_MIDDLEWARE}"
+
+
+      
+
+  backend:
+    image: emilienroche/backend
+    container_name: backend
+    networks:
+      - proxy
+    depends_on:
+      - database
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`${TASKLIST_DOMAIN}`) && PathPrefix(`/api`)"
+      - "traefik.http.services.backend.loadbalancer.server.port=${BACKEND_PORT}"
+      - "traefik.http.routers.backend.tls=true"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+
+
+  database:
+    image: emilienroche/database
+    container_name: database
+    networks:
+      - proxy
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${DB_NAME}
+    volumes:
+      - ./db-data:/var/lib/mysql
+
+
+
+
+networks:
+  proxy:
+    external: true
