@@ -16,7 +16,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
-          # Traefik
+          # Traefik  test
           TRAEFIK_TRAEFIK_PORT_1: ${{ secrets.TRAEFIK_TRAEFIK_PORT_1 }}
           TRAEFIK_TRAEFIK_PORT_2: ${{ secrets.TRAEFIK_TRAEFIK_PORT_2 }}
           TRAEFIK_SERVER_PORT: ${{ secrets.TRAEFIK_SERVER_PORT }}
