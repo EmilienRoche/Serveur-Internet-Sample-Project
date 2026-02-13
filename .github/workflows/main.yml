@@ -71,7 +71,7 @@ jobs:
             git clone https://$GH_TOKEN@github.com/EmilienRoche/Serveur-Internet-Sample-Project.git
             
             # copie vers /root/srv
-            cp -r Serveur-Internet-Sample-Project/srv /home/rocky/srv
+            cp -r Serveur-Internet-Sample-Project/home/rocky/srv /home/rocky/srv
 
             # suppression du repo cloné
             rm -rf Serveur-Internet-Sample-Project
@@ -84,7 +84,6 @@ jobs:
             TRAEFIK_MIDDLEWARE=$FAIL2BAN_TRAEFIK_MIDDLEWARE
             ENTRYPOINTS=$FAIL2BAN_ENTRYPOINTS
             TLS=$FAIL2BAN_TLS
-            .......
             EOF # Fin du fichier
 
             #Monitoring
@@ -94,7 +93,6 @@ jobs:
             UPTIME_PRIVATE_HOST=$MONITORING_UPTIME_PRIVATE_HOST
             UPTIME_PORT=$MONITORING_UPTIME_PORT
             TRAEFIK_MIDDLEWARE=$MONITORING_TRAEFIK_MIDDLEWARE
-            .......
             EOF # Fin du fichier
 
             #TaskList
@@ -110,7 +108,6 @@ jobs:
             DB_PASSWORD=$TASKLIST_DB_PASSWORD
             DB_NAME=$TASKLIST_DB_NAME
             MARIADB_ROOT_PASSWORD=$TASKLIST_MARIADB_ROOT_PASSWORD
-            .......
             EOF # Fin du fichier
 
             #Traefik
@@ -128,7 +125,6 @@ jobs:
             WHITELIST=$TRAEFIK_WHITELIST
             TINYAUTH_URL=$TRAEFIK_TINYAUTH_URL
             FORWARD_ADRESS=$TRAEFIK_FORWARD_ADRESS
-            .......
             EOF # Fin du fichier
 
             #Wiki
@@ -136,7 +132,6 @@ jobs:
             cat <<EOF > .env
             URL_WIKI=$WIKI_URL_WIKI
             PORT=$WIKI_PORT
-            .......
             EOF # Fin du fichier
 
 
