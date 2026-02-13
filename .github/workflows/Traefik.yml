@@ -42,7 +42,8 @@ jobs:
             git clone https://$GH_TOKEN@github.com/EmilienRoche/Serveur-Internet-Sample-Project.git
             
             # copie vers /root/srv
-            cp -r Serveur-Internet-Sample-Project/home/rocky/srv/traefik/* /home/rocky/srv/traefik
+            rsync -av Serveur-Internet-Sample-Project/home/rocky/srv/tasklist/ /home/rocky/srv/
+
 
             # suppression du repo cloné
             rm -rf Serveur-Internet-Sample-Project
