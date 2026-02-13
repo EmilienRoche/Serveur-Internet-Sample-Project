@@ -1,0 +1,55 @@
+name: Deployment Workflow
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  Deploy-Docker-Infra:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy on remote server
+        uses: appleboy/ssh-action@v1.2.0
+
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+          # FAIL2BAN
+          FAIL2BAN_FAIL2BAN_UI_DOMAIN: ${{ secrets.FAIL2BAN_UI_DOMAIN_FAIL2BAN_UI_DOMAIN }}
+          FAIL2BAN_FAIL2BAN_UI_PORT:  ${{ secrets.FAIL2BAN_FAIL2BAN_UI_PORT }}
+          FAIL2BAN_TRAEFIK_MIDDLEWARE: ${{ secrets.FAIL2BAN_TRAEFIK_MIDDLEWARE }}
+          FAIL2BAN_ENTRYPOINTS: ${{ secrets.FAIL2BAN_ENTRYPOINTS }}
+          FAIL2BAN_TLS: ${{ secrets.FAIL2BAN_TLS }}
+          
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+          envs: GH_TOKEN,FAIL2BAN_FAIL2BAN_UI_DOMAIN,FAIL2BAN_FAIL2BAN_UI_PORT,FAIL2BAN_TRAEFIK_MIDDLEWARE,FAIL2BAN_ENTRYPOINTS,FAIL2BAN_TLS
+
+          script: |
+            # clone le rep
+            git clone https://$GH_TOKEN@github.com/EmilienRoche/Serveur-Internet-Sample-Project.git
+            
+            # copie vers /root/srv
+            cp -r Serveur-Internet-Sample-Project/home/rocky/srv/fail2ban /home/rocky/srv
+           
+            # suppression du repo cloné
+            rm -rf Serveur-Internet-Sample-Project
+
+            # Fail2Ban
+            cd /home/rocky/srv/fail2ban
+            cat <<'EOF' > .env
+            FAIL2BAN_UI_DOMAIN=$FAIL2BAN_FAIL2BAN_UI_DOMAIN
+            FAIL2BAN_UI_PORT=$FAIL2BAN_FAIL2BAN_UI_PORT
+            TRAEFIK_MIDDLEWARE=$FAIL2BAN_TRAEFIK_MIDDLEWARE
+            ENTRYPOINTS=$FAIL2BAN_ENTRYPOINTS
+            TLS=$FAIL2BAN_TLS
+            EOF
+
+            # lancement docker
+            cd /home/rocky/srv
+            docker compose up -d --force-recreate
