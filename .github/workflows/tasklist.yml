@@ -16,7 +16,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           
-          # Tasklist
+          # Tasklist test
           TASKLIST_TASKLIST_DOMAIN: ${{ secrets.TASKLIST_TASKLIST_DOMAIN }}
           TASKLIST_FRONTEND_PORT: ${{ secrets.TASKLIST_FRONTEND_PORT }}
           TASKLIST_BACKEND_PORT: ${{ secrets.TASKLIST_BACKEND_PORT }}
