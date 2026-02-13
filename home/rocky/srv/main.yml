@@ -16,7 +16,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
-          # FAIL2BAN
+          # FAIL2BAN test
           FAIL2BAN_FAIL2BAN_UI_DOMAIN: ${{ secrets.FAIL2BAN_UI_DOMAIN_FAIL2BAN_UI_DOMAIN }}
           FAIL2BAN_FAIL2BAN_UI_PORT:  ${{ secrets.FAIL2BAN_FAIL2BAN_UI_PORT }}
           FAIL2BAN_TRAEFIK_MIDDLEWARE: ${{ secrets.FAIL2BAN_TRAEFIK_MIDDLEWARE }}
