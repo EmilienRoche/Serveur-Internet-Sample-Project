@@ -1,0 +1,53 @@
+name: Deployment Workflow
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  Deploy-Docker-Infra:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy on remote server
+        uses: appleboy/ssh-action@v1.2.0
+
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+          # Monitoring
+          MONITORING_UPTIME_PUBLIC_HOST: ${{ secrets.MONITORING_UPTIME_PUBLIC_HOST }}
+          MONITORING_UPTIME_PRIVATE_HOST: ${{ secrets.MONITORING_UPTIME_PRIVATE_HOS }}
+          MONITORING_UPTIME_PORT: ${{ secrets.MONITORING_UPTIME_PORT }}
+          MONITORING_TRAEFIK_MIDDLEWARE: ${{ secrets.MONITORING_TRAEFIK_MIDDLEWARE }}
+          
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+          envs: GH_TOKEN,FAIL2BAN_FAIL2BAN_UI_DOMAIN,FAIL2BAN_FAIL2BAN_UI_PORT,FAIL2BAN_TRAEFIK_MIDDLEWARE,FAIL2BAN_ENTRYPOINTS,FAIL2BAN_TLS,MONITORING_UPTIME_PUBLIC_HOST,MONITORING_UPTIME_PRIVATE_HOST,MONITORING_UPTIME_PORT,MONITORING_TRAEFIK_MIDDLEWARE,TASKLIST_TASKLIST_DOMAIN,TASKLIST_FRONTEND_PORT,TASKLIST_BACKEND_PORT,TASKLIST_TRAEFIK_MIDDLEWARE,TASKLIST_DB_HOST,TASKLIST_DB_PORT,TASKLIST_DB_USER,TASKLIST_DB_PASSWORD,TASKLIST_DB_NAME,TASKLIST_MARIADB_ROOT_PASSWORD,TRAEFIK_TRAEFIK_PORT_1,TRAEFIK_TRAEFIK_PORT_2,TRAEFIK_SERVER_PORT,TRAEFIK_TRAEFIK_DOMAIN,TRAEFIK_TRAEFIK_MIDDLEWARE,TRAEFIK_URL,TRAEFIK_USER,TRAEFIK_ID,TRAEFIK_SECRET,TRAEFIK_WHITELIST,TRAEFIK_TINYAUTH_URL,TRAEFIK_FORWARD_ADRESS,WIKI_URL_WIKI,WIKI_PORT
+
+          script: |
+            # clone le rep
+            git clone https://$GH_TOKEN@github.com/EmilienRoche/Serveur-Internet-Sample-Project.git
+            
+            # copie vers /root/srv
+            cp -r Serveur-Internet-Sample-Project/home/rocky/srv/monitoring /home/rocky/srv/monitoring
+
+            # suppression du repo cloné
+            rm -rf Serveur-Internet-Sample-Project
+
+            # Monitoring
+            cd /home/rocky/srv/monitoring
+            cat <<'EOF' > .env
+            UPTIME_PUBLIC_HOST=$MONITORING_UPTIME_PUBLIC_HOST
+            UPTIME_PRIVATE_HOST=$MONITORING_UPTIME_PRIVATE_HOST
+            UPTIME_PORT=$MONITORING_UPTIME_PORT
+            TRAEFIK_MIDDLEWARE=$MONITORING_TRAEFIK_MIDDLEWARE
+            EOF
+
+            # lancement docker
+            cd /home/rocky/srv/monitoring
+            docker compose up -d --force-recreate
