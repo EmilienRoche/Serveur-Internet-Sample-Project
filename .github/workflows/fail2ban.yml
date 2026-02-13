@@ -35,7 +35,7 @@ jobs:
             git clone https://$GH_TOKEN@github.com/EmilienRoche/Serveur-Internet-Sample-Project.git
             
             # copie vers /root/srv
-            cp -r Serveur-Internet-Sample-Project/home/rocky/srv/fail2ban /home/rocky/srv/fail2ban
+            cp -r Serveur-Internet-Sample-Project/home/rocky/srv/fail2ban/* /home/rocky/srv/fail2ban
            
             # suppression du repo cloné
             rm -rf Serveur-Internet-Sample-Project
