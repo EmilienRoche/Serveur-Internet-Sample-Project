@@ -1,4 +1,4 @@
-name: Deployement Workflow
+name: Deployment Workflow
 
 on:
   push:
@@ -76,28 +76,28 @@ jobs:
             # suppression du repo cloné
             rm -rf Serveur-Internet-Sample-Project
 
-            #Fail2Ban
+            # Fail2Ban
             cd /home/rocky/srv/fail2ban
-            cat <<EOF > .env
+            cat <<'EOF' > .env
             FAIL2BAN_UI_DOMAIN=$FAIL2BAN_FAIL2BAN_UI_DOMAIN
             FAIL2BAN_UI_PORT=$FAIL2BAN_FAIL2BAN_UI_PORT
             TRAEFIK_MIDDLEWARE=$FAIL2BAN_TRAEFIK_MIDDLEWARE
             ENTRYPOINTS=$FAIL2BAN_ENTRYPOINTS
             TLS=$FAIL2BAN_TLS
-            EOF # Fin du fichier
+            EOF
 
-            #Monitoring
+            # Monitoring
             cd /home/rocky/srv/monitoring
-            cat <<EOF > .env
+            cat <<'EOF' > .env
             UPTIME_PUBLIC_HOST=$MONITORING_UPTIME_PUBLIC_HOST
             UPTIME_PRIVATE_HOST=$MONITORING_UPTIME_PRIVATE_HOST
             UPTIME_PORT=$MONITORING_UPTIME_PORT
             TRAEFIK_MIDDLEWARE=$MONITORING_TRAEFIK_MIDDLEWARE
-            EOF # Fin du fichier
+            EOF
 
-            #TaskList
+            # TaskList
             cd /home/rocky/srv/tasklist
-            cat <<EOF > .env
+            cat <<'EOF' > .env
             TASKLIST_DOMAIN=$TASKLIST_TASKLIST_DOMAIN
             FRONTEND_PORT=$TASKLIST_FRONTEND_PORT
             BACKEND_PORT=$TASKLIST_BACKEND_PORT
@@ -108,11 +108,11 @@ jobs:
             DB_PASSWORD=$TASKLIST_DB_PASSWORD
             DB_NAME=$TASKLIST_DB_NAME
             MARIADB_ROOT_PASSWORD=$TASKLIST_MARIADB_ROOT_PASSWORD
-            EOF # Fin du fichier
+            EOF
 
-            #Traefik
+            # Traefik
             cd /home/rocky/srv/traefik
-            cat <<EOF > .env
+            cat <<'EOF' > .env
             TRAEFIK_PORT_1=$TRAEFIK_TRAEFIK_PORT_1
             TRAEFIK_PORT_2=$TRAEFIK_TRAEFIK_PORT_2
             SERVER_PORT=$TRAEFIK_SERVER_PORT
@@ -125,15 +125,14 @@ jobs:
             WHITELIST=$TRAEFIK_WHITELIST
             TINYAUTH_URL=$TRAEFIK_TINYAUTH_URL
             FORWARD_ADRESS=$TRAEFIK_FORWARD_ADRESS
-            EOF # Fin du fichier
+            EOF
 
-            #Wiki
+            # Wiki
             cd /home/rocky/srv/wiki
-            cat <<EOF > .env
+            cat <<'EOF' > .env
             URL_WIKI=$WIKI_URL_WIKI
             PORT=$WIKI_PORT
-            EOF # Fin du fichier
-
+            EOF
 
             # lancement docker
             cd /home/rocky/srv
